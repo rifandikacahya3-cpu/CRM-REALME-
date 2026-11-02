@@ -108,7 +108,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:14px 22px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:20;max-width:90vw}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
-#formH select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230D0D0D' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+form select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230D0D0D' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
 .pill.none{background:var(--mist);color:var(--muted)}
 tfoot td{border-top:2px solid var(--line);background:var(--mist)}
 #tDaily{min-width:980px}
@@ -117,7 +117,34 @@ tfoot td{border-top:2px solid var(--line);background:var(--mist)}
   .tabs{width:100%}
   .tabs button{flex:1;padding:8px 6px;font-size:13px}
 }
+input[type=text],input[type=tel],select{text-transform:uppercase}
+.subnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.subnav button{border:0;cursor:pointer;background:#fff;padding:9px 16px;border-radius:999px;font-weight:700;font-size:14px}
+.subnav button.on{background:var(--ink);color:var(--yellow)}
+.pane[hidden]{display:none}
+.charts{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:820px){.charts{grid-template-columns:1fr 1fr}.charts .wide{grid-column:span 2}}
+.ch{padding:20px}.ch h4{font-size:15px;margin-bottom:12px}
+.vb{display:flex;align-items:stretch;gap:4px;height:190px;overflow-x:auto}
+.col{flex:1;min-width:22px;display:flex;flex-direction:column;align-items:center}
+.col b{font-size:11px}.col small{font-size:10px;color:var(--muted)}
+.bw{flex:1;width:100%;display:flex;align-items:flex-end;min-height:0}
+.bw i{display:block;width:100%;background:var(--ink);border-radius:4px 4px 0 0;min-height:2px}
+.hb{display:grid;grid-template-columns:minmax(80px,38%) 1fr 34px;gap:10px;align-items:center;font-size:13px;margin-bottom:8px}
+.hb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.hb .track{height:12px;background:var(--mist);border-radius:99px;overflow:hidden}
+.hb .track i{display:block;height:100%;background:var(--yellow);border-radius:99px}
+.hb b{text-align:right}
+.donutw{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut{width:130px;height:130px;border-radius:50%;background:var(--mist);position:relative}
+.donut::after{content:"";position:absolute;inset:28px;background:#fff;border-radius:50%}
+.lg{font-size:14px;font-weight:600;line-height:1.9}.lg i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:8px}
+.up{margin-bottom:12px}.up h4{margin-bottom:4px}.up .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.up input[type=file]{font-size:14px;max-width:100%}
+.mfilter{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.mfilter input{width:auto;background:#fff}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -138,7 +165,7 @@ tfoot td{border-top:2px solid var(--line);background:var(--mist)}
     <div class="hero-in">
       <h1>Input data customer</h1>
       <p>Isi setiap kali ada customer baru. Data langsung masuk ke tim dan tercatat di progres kamu.</p>
-      <div class="mine" id="mine" hidden>Hari ini di perangkat ini <b id="mineN">0</b> data</div>
+      <div class="mine" id="mine" hidden>Bulan ini di perangkat ini <b id="mineN">0</b> data</div>
     </div>
   </div>
 
@@ -154,10 +181,10 @@ tfoot td{border-top:2px solid var(--line);background:var(--mist)}
         </div>
         <div class="grid">
           <label class="f span2">ARM / FT name
-            <input type="text" name="arm" autocomplete="off" required>
+            <select name="arm" required><option value="RIFANDIKA CAHYA" selected>RIFANDIKA CAHYA</option></select>
             <span class="err"></span></label>
           <label class="f">SA name
-            <input type="text" name="sa" autocomplete="name" required>
+            <select name="saSel" class="saSel"><option value="">PILIH NAMA PROMOTOR</option></select><input type="text" name="sa" autocomplete="off" required>
             <span class="err"></span></label>
           <label class="f">SA personal code
             <input type="text" name="saCode" autocomplete="off" required>
@@ -191,7 +218,7 @@ tfoot td{border-top:2px solid var(--line);background:var(--mist)}
             <input type="tel" name="wa" inputmode="numeric" placeholder="08xxxxxxxxxx" autocomplete="off" required>
             <span class="err"></span></label>
           <label class="f">Realme product
-            <input type="text" name="product" autocomplete="off" placeholder="Tipe HP yang dibeli / ditawarkan" required>
+            <select name="product" required><option value="" disabled selected>PILIH TIPE REALME</option><option>NOTE 80</option><option>C01</option><option>C85 PRO</option><option>C85 5G</option><option>C85 4G</option><option>C100i</option><option>C100X</option><option>C100</option><option>REALME 16 5G</option><option>REALME 16 PRO</option><option>REALME 16 PRO+</option><option>REALME EOL</option></select>
             <span class="err"></span></label>
           <div class="f">Gender
             <div class="seg" role="radiogroup" aria-label="Gender">
@@ -230,10 +257,10 @@ tfoot td{border-top:2px solid var(--line);background:var(--mist)}
             <input type="date" name="date" required>
             <span class="err"></span></label>
           <label class="f">ARM / FT name
-            <input type="text" name="arm" autocomplete="off" required>
+            <select name="arm" required><option value="RIFANDIKA CAHYA" selected>RIFANDIKA CAHYA</option></select>
             <span class="err"></span></label>
           <label class="f">SA name
-            <input type="text" name="sa" autocomplete="name" required>
+            <select name="saSel" class="saSel"><option value="">PILIH NAMA PROMOTOR</option></select><input type="text" name="sa" autocomplete="off" required>
             <span class="err"></span></label>
           <label class="f">SA personal code
             <input type="text" name="saCode" autocomplete="off" required>
@@ -317,18 +344,41 @@ tfoot td{border-top:2px solid var(--line);background:var(--mist)}
           <select id="fArm" aria-label="Filter ARM / FT"><option value="">Semua ARM / FT</option></select>
           <input type="date" id="fFrom" aria-label="Dari tanggal">
           <input type="date" id="fTo" aria-label="Sampai tanggal">
-          <button class="btn small" id="refresh" type="button">Muat ulang</button>
+          <button class="btn small alt" id="fMonth" type="button">Bulan ini</button><button class="btn small alt" id="fReset" type="button">Reset</button><button class="btn small" id="refresh" type="button">Muat ulang</button>
         </div>
       </div>
 
-      <div class="kpis">
+      <div class="subnav"><button class="on" data-pane="dash">Dashboard</button><button data-pane="report">Report bulanan</button><button data-pane="data">Data &amp; laporan</button></div>
+<div class="pane" id="p-dash">
+<div class="kpis">
         <div class="kpi hot"><b id="kTotal">0</b><span>Total data masuk</span></div>
         <div class="kpi"><b id="kToday">0</b><span>Masuk hari ini</span></div>
         <div class="kpi"><b id="kPromo">0</b><span>Promotor aktif</span></div>
         <div class="kpi"><b id="kSplit">0 / 0</b><span>CL / CB</span></div>
       </div>
 
-      <div class="sec-title"><h3>Per promotor</h3><input type="search" id="fSearch" placeholder="Cari nama / kode / toko" aria-label="Cari" style="width:240px;padding:10px 12px;font-size:14px;background:#fff"></div>
+      <div class="sec-title"><h3>Grafik data CRM</h3></div>
+<div class="charts">
+  <div class="card ch wide"><h4>CRM masuk per hari</h4><div class="vb" id="cTrend"></div></div>
+  <div class="card ch"><h4>CL vs CB</h4><div class="donutw"><div class="donut" id="cDonut"></div><div class="lg" id="cDonutL"></div></div></div>
+  <div class="card ch"><h4>Produk Realme</h4><div id="cProd"></div></div>
+  <div class="card ch wide"><h4>10 promotor teratas (jumlah CRM)</h4><div id="cTop"></div></div>
+</div>
+<div class="sec-title"><h3>Perbandingan SO vs CRM</h3></div>
+<div class="card up"><h4>Upload pencapaian SO promotor</h4>
+  <p class="hint" style="margin:0">File Excel berisi kolom: SA name, SA personal code, Store code, Store name, SO. Upload baru akan menggantikan daftar lama dan menjadi pilihan nama promotor di form.</p>
+  <div class="row"><input type="file" id="soFile" accept=".xlsx,.xls,.csv"><button class="btn small" id="soBtn" type="button">Upload &amp; sinkronkan</button></div>
+  <div id="soMsg" role="status" aria-live="polite"></div></div>
+<div class="tw"><table id="tCmp"><thead><tr><th>Promotor</th><th>Toko</th><th class="num">SO</th><th class="num">CRM</th><th class="num">CRM / SO</th><th class="num">Kurang CRM</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
+</div>
+<div class="pane" id="p-report" hidden>
+  <div class="mfilter"><label for="rMonth"><b>Periode</b></label><input type="month" id="rMonth"></div>
+  <div class="kpis" id="rKpis"></div>
+  <div class="sec-title"><h3>Sebaran CRM per promotor (skala 1-10 dan &gt;10)</h3></div>
+  <div class="tw"><table id="tScale"><thead><tr><th>CRM per promotor</th><th class="num">Jumlah promotor</th><th class="num">Total CRM (perkiraan user)</th><th>Proporsi</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
+</div>
+<div class="pane" id="p-data" hidden>
+<div class="sec-title"><h3>Per promotor</h3><input type="search" id="fSearch" placeholder="Cari nama / kode / toko" aria-label="Cari" style="width:240px;padding:10px 12px;font-size:14px;background:#fff"></div>
       <div class="tw"><table id="tPromo">
         <thead><tr><th>Promotor</th><th>Toko</th><th class="num">Hari ini</th><th class="num">CL</th><th class="num">CB</th><th class="num">Total</th><th>Progres target</th><th>Laporan hari ini</th></tr></thead>
         <tbody></tbody></table></div>
@@ -343,6 +393,7 @@ tfoot td{border-top:2px solid var(--line);background:var(--mist)}
         <thead><tr><th>Tanggal</th><th>Promotor</th><th>Leasing Realme</th><th class="num">Non-Avanto</th><th class="num">HCI</th><th class="num">Kredivo</th><th class="num">SPayLater</th><th class="num">Indodana</th><th class="num">YESS</th><th class="num">Samsung</th><th class="num">Lainnya</th></tr></thead>
         <tbody></tbody><tfoot></tfoot></table></div>
     </div>
+</div>
   </main>
 </section>
 
@@ -351,7 +402,7 @@ tfoot td{border-top:2px solid var(--line);background:var(--mist)}
 <script>
 /* ================= CONFIG ================= */
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzwiNSn9T3Oydu0-Ff5ymxU2Kp9nKPAfZ7NEqgAXeh04Ri4InjcKcf0aGGeWOx-pkPCnQ/exec',  // URL Web App dari Google Apps Script (berakhiran /exec)
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwYSWUUtvL2iXIw2E5RRokqJHu1hoAOlMF4stC8tkPSZZSCKs5QBO7tLGcerUQi4poX8A/exec',  // URL Web App dari Google Apps Script (berakhiran /exec)
   TARGET: 30                                 // target jumlah data per promotor (ubah sesuai kebutuhan)
 };
 /* ========================================== */
@@ -389,20 +440,20 @@ form.date.value = todayStr(); formH.date.value = todayStr();
 if(!configured()) $('#setupWarn').hidden = false;
 
 function loadPromo(){
-  try{ const p = JSON.parse(store.get('promo')||'{}'); [form, formH].forEach(f=>PROMO_FIELDS.forEach(k=>{ if(p[k]) f[k].value = p[k]; })); }catch(e){}
+  try{ const p = JSON.parse(store.get('promo')||'{}'); [form, formH].forEach(f=>PROMO_FIELDS.forEach(k=>{ if(p[k] && k!=='arm') f[k].value = p[k]; })); }catch(e){}
 }
 function savePromo(f){ const p={}; PROMO_FIELDS.forEach(k=>p[k]=f[k].value.trim()); store.set('promo', JSON.stringify(p)); }
 loadPromo();
-$$('.clearMe').forEach(b => b.onclick = () => { store.del('promo'); [form, formH].forEach(f=>PROMO_FIELDS.forEach(k=>f[k].value='')); const v = $('#view-harian').hidden ? form : formH; v.arm.focus(); });
+$$('.clearMe').forEach(b => b.onclick = () => { store.del('promo'); [form, formH].forEach(f=>{ PROMO_FIELDS.filter(k=>k!=='arm').forEach(k=>f[k].value=''); f.saSel.value=''; }); const v = $('#view-harian').hidden ? form : formH; (v.saSel.hidden ? v.sa : v.saSel).focus(); });
 
 function myCount(){
   let log = []; try{ log = JSON.parse(store.get('log')||'[]'); }catch(e){}
-  const n = log.filter(d=>d===todayStr()).length;
+  const n = log.filter(d=>String(d).slice(0,7)===todayStr().slice(0,7)).length;
   $('#mine').hidden = false; $('#mineN').textContent = n;
 }
 function bumpCount(){
   let log = []; try{ log = JSON.parse(store.get('log')||'[]'); }catch(e){}
-  log.push(todayStr()); store.set('log', JSON.stringify(log.slice(-500))); myCount();
+  log.push(todayStr()); store.set('log', JSON.stringify(log.slice(-3000))); myCount();
 }
 myCount();
 
@@ -415,6 +466,7 @@ function normWA(v){
 function setErr(el, msg){
   const box = el.closest('label,div.f')?.querySelector('.err');
   if(el.classList) el.classList.toggle('bad', !!msg);
+  if(el.name==='sa' && el.form?.saSel) el.form.saSel.classList.toggle('bad', !!msg);
   if(box) box.textContent = msg || '';
 }
 function validate(){
@@ -448,7 +500,7 @@ form.addEventListener('submit', async e => {
     storeCode: form.storeCode.value.trim(), storeName: form.storeName.value.trim(), status: form.status.value,
     wa: normWA(form.wa.value), product: form.product.value.trim(), gender: form.gender.value, customer: form.customer.value.trim()
   };
-  sending = true; const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'Mengirim...';
+  up(data); sending = true; const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'Mengirim...';
   try{
     await fetch(CONFIG.SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(data) });
     savePromo(form); loadPromo(); bumpCount();
@@ -479,7 +531,7 @@ formH.addEventListener('submit', async e => {
   let ok = true, first = null;
   const mark = (el, m) => { setErr(el, m); if(m){ ok = false; first = first || el; } };
   [...PROMO_FIELDS, 'date', 'leasing', ...H_NUM].forEach(k => mark(formH[k], formH[k].value.trim() ? '' : 'Wajib diisi'));
-  if(formH.leasing.value === 'Tidak ada Penjualan' && formH.nonAvanto.value !== '' && Number(formH.nonAvanto.value) > 0){
+  if(formH.leasing.value.toUpperCase() === 'TIDAK ADA PENJUALAN' && formH.nonAvanto.value !== '' && Number(formH.nonAvanto.value) > 0){
     mark(formH.nonAvanto, 'Pilih 0 jika tidak ada penjualan');
   }
   if(!ok){ first.focus(); return; }
@@ -488,7 +540,7 @@ formH.addEventListener('submit', async e => {
   PROMO_FIELDS.forEach(k => data[k] = formH[k].value.trim());
   H_NUM.forEach(k => data[k] = Number(formH[k].value));
 
-  sendingH = true; const btn = $('#submitBtnH'); btn.disabled = true; btn.textContent = 'Mengirim...';
+  up(data); sendingH = true; const btn = $('#submitBtnH'); btn.disabled = true; btn.textContent = 'Mengirim...';
   try{
     await fetch(CONFIG.SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(data) });
     savePromo(formH); loadPromo();
@@ -502,6 +554,70 @@ formH.addEventListener('submit', async e => {
   }
 });
 
+/* ---------- util: kapital, tanggal, roster ---------- */
+const U = s => String(s ?? '').trim().toUpperCase();
+const up = d => Object.keys(d).forEach(k => { if(typeof d[k]==='string' && !['date','type'].includes(k)) d[k] = d[k].toUpperCase(); });
+document.addEventListener('input', e => {
+  const t = e.target;
+  if(t.matches('input[type=text],input[type=tel]')){
+    const s = t.selectionStart, en = t.selectionEnd, u = t.value.toUpperCase();
+    if(u !== t.value){ t.value = u; try{ t.setSelectionRange(s,en); }catch(_){} }
+  }
+});
+function nd(v){
+  if(v==null || v==='') return '';
+  if(v instanceof Date) v = v.toISOString();
+  v = String(v).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  const m = v.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/);
+  if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  const d = new Date(v);
+  if(isNaN(d)) return v.slice(0,10);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0,10);
+}
+function flt(){
+  let from = $('#fFrom').value, to = $('#fTo').value;
+  if(from && to && from > to) [from,to] = [to,from];
+  return { arm: $('#fArm').value, from, to };
+}
+let ROSTER = [];
+try{ ROSTER = JSON.parse(store.get('roster')||'[]'); }catch(e){}
+const normRoster = rows => (rows||[]).map(r=>({sa:U(r.sa),saCode:U(r.saCode),storeCode:U(r.storeCode),storeName:U(r.storeName),so:Number(r.so)||0})).filter(r=>r.sa||r.saCode);
+const rKey = r => (r.saCode||r.sa||'').toUpperCase();
+function fillFrom(f,r){ f.sa.value=r.sa; f.saCode.value=r.saCode; f.storeCode.value=r.storeCode; f.storeName.value=r.storeName; }
+function applyRoster(){
+  const has = ROSTER.length > 0;
+  const names = [...ROSTER].sort((a,b)=>a.sa.localeCompare(b.sa));
+  [form,formH].forEach(f=>{
+    f.saSel.innerHTML = '<option value="">PILIH NAMA PROMOTOR</option>' + names.map(r=>`<option value="${esc(rKey(r))}">${esc(r.sa)}</option>`).join('');
+    f.saSel.hidden = !has; f.sa.hidden = has;
+    ['saCode','storeCode','storeName'].forEach(k=>f[k].readOnly = has);
+    if(has){
+      const r = names.find(x=>x.sa===f.sa.value.trim().toUpperCase());
+      if(r){ f.saSel.value = rKey(r); fillFrom(f,r); }
+      else { f.saSel.value=''; ['sa','saCode','storeCode','storeName'].forEach(k=>f[k].value=''); }
+    }
+  });
+}
+[form,formH].forEach(f=>f.saSel.addEventListener('change',()=>{
+  const r = ROSTER.find(x=>rKey(x)===f.saSel.value);
+  if(r) fillFrom(f,r); else ['sa','saCode','storeCode','storeName'].forEach(k=>f[k].value='');
+  ['sa','saCode','storeCode','storeName'].forEach(k=>setErr(f[k],''));
+}));
+async function fetchRoster(){
+  const j = await (await fetch(CONFIG.SCRIPT_URL + '?action=roster')).json();
+  return (j.ok && Array.isArray(j.rows)) ? normRoster(j.rows) : null;
+}
+async function syncRoster(){
+  if(!configured()) return;
+  try{
+    const r = await fetchRoster();
+    if(r && r.length){ ROSTER = r; store.set('roster', JSON.stringify(r)); applyRoster(); if(!$('#dash').hidden) render(); }
+  }catch(e){}
+}
+applyRoster(); syncRoster();
+
 /* ---------- dashboard ---------- */
 let ALL = [], DAILY = [];
 function pinValue(){ try{ return sessionStorage.getItem('pin')||''; }catch(e){ return ''; } }
@@ -511,7 +627,8 @@ async function loadData(pin){
   const res = await fetch(CONFIG.SCRIPT_URL + '?action=list&pin=' + encodeURIComponent(pin));
   const json = await res.json();
   if(!json.ok) throw new Error(json.error || 'Gagal memuat data');
-  ALL = json.rows || []; DAILY = json.daily || [];
+  ALL = (json.rows||[]).map(r=>({...r,date:nd(r.date)})); DAILY = (json.daily||[]).map(r=>({...r,date:nd(r.date)}));
+  await syncRoster();
   const arms = [...new Set([...ALL, ...DAILY].map(r=>r.arm).filter(Boolean))].sort();
   const cur = $('#fArm').value;
   $('#fArm').innerHTML = '<option value="">Semua ARM / FT</option>' + arms.map(a=>`<option ${a===cur?'selected':''}>${esc(a)}</option>`).join('');
@@ -537,11 +654,11 @@ $('#fSearch').addEventListener('input', render);
 if(pinValue()) openDash(pinValue());
 
 function filtered(){
-  const arm=$('#fArm').value, from=$('#fFrom').value, to=$('#fTo').value;
+  const {arm,from,to}=flt();
   return ALL.filter(r => (!arm || r.arm===arm) && (!from || r.date>=from) && (!to || r.date<=to));
 }
 function filteredDaily(){
-  const arm=$('#fArm').value, from=$('#fFrom').value, to=$('#fTo').value;
+  const {arm,from,to}=flt();
   return DAILY.filter(r => (!arm || r.arm===arm) && (!from || r.date>=from) && (!to || r.date<=to));
 }
 const D_NUM = ['nonAvanto','soHci','soKredivo','soSpay','soIndodana','soYess','soSamsung','soLain'];
@@ -593,7 +710,110 @@ function render(){
   const sums = D_NUM.map(k => drows.reduce((n,r)=> n + (Number(r[k])||0), 0));
   $('#tDaily tfoot').innerHTML = drows.length
     ? `<tr><td colspan="3"><b>Total (${drows.length} laporan)</b></td>${sums.map(n=>`<td class="num"><b>${n}</b></td>`).join('')}</tr>` : '';
+  renderExtra(rows);
 }
+
+/* ---------- sub menu, filter cepat ---------- */
+$$('.subnav button').forEach(b => b.onclick = () => {
+  $$('.subnav button').forEach(x=>x.classList.toggle('on', x===b));
+  $$('.pane').forEach(p=>p.hidden = p.id !== 'p-'+b.dataset.pane);
+});
+const monthRange = ym => { const [y,m]=ym.split('-').map(Number); return [ym+'-01', ym+'-'+String(new Date(y,m,0).getDate()).padStart(2,'0')]; };
+$('#fMonth').onclick = () => { [$('#fFrom').value,$('#fTo').value] = monthRange(todayStr().slice(0,7)); render(); };
+$('#fReset').onclick = () => { $('#fFrom').value=''; $('#fTo').value=''; $('#fArm').value=''; render(); };
+$('#rMonth').value = todayStr().slice(0,7);
+$('#rMonth').addEventListener('change', () => renderExtra(filtered()));
+
+/* ---------- grafik, perbandingan SO, report bulanan ---------- */
+const NODATA = '<div class="empty">Belum ada data</div>';
+const countBy = (arr,fn) => { const m={}; arr.forEach(r=>{ const k=fn(r)||'-'; m[k]=(m[k]||0)+1; }); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };
+function hb(sel, entries){
+  const max = Math.max(1, ...entries.map(e=>e[1]));
+  $(sel).innerHTML = entries.length ? entries.map(([l,v])=>`<div class="hb"><span title="${esc(l)}">${esc(l)}</span><div class="track"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('') : NODATA;
+}
+function renderExtra(rows){
+  /* grafik */
+  const byD = countBy(rows, r=>r.date).sort((a,b)=>a[0].localeCompare(b[0])).slice(-31);
+  const mx = Math.max(1, ...byD.map(x=>x[1]));
+  $('#cTrend').innerHTML = byD.length ? byD.map(([d,v])=>`<div class="col" title="${esc(d)}: ${v}"><b>${v}</b><div class="bw"><i style="height:${v/mx*100}%"></i></div><small>${esc(d.slice(8))}</small></div>`).join('') : NODATA;
+  const cl = rows.filter(r=>r.status==='CL').length, cb = rows.filter(r=>r.status==='CB').length, tt = cl+cb;
+  $('#cDonut').style.background = tt ? `conic-gradient(var(--ink) 0 ${cl/tt*100}%, var(--yellow) 0)` : 'var(--mist)';
+  $('#cDonutL').innerHTML = `<div><i style="background:var(--ink)"></i>CL: ${cl}</div><div><i style="background:var(--yellow)"></i>CB: ${cb}</div>`;
+  hb('#cProd', countBy(rows, r=>U(r.product)).slice(0,12));
+  hb('#cTop', countBy(rows, r=>r.sa).slice(0,10));
+
+  /* SO vs CRM */
+  const m = new Map();
+  ROSTER.forEach(r=>m.set(rKey(r), {...r, crm:0}));
+  rows.forEach(r=>{ const k=rKey(r); if(!m.has(k)) m.set(k,{sa:r.sa,saCode:r.saCode,storeCode:r.storeCode,storeName:r.storeName,so:0,crm:0}); m.get(k).crm++; });
+  const list = [...m.values()].sort((a,b)=>b.so-a.so || b.crm-a.crm);
+  const pct = (c,s) => s ? Math.round(c/s*100)+'%' : '-';
+  $('#tCmp tbody').innerHTML = list.length ? list.map(r=>`<tr>
+    <td class="who"><b>${esc(r.sa)}</b><small>${esc(r.saCode)}</small></td>
+    <td class="who"><b>${esc(r.storeName)}</b><small>${esc(r.storeCode)}</small></td>
+    <td class="num">${r.so}</td><td class="num">${r.crm}</td><td class="num"><b>${pct(r.crm,r.so)}</b></td>
+    <td class="num">${r.so ? Math.max(0,r.so-r.crm) : '-'}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">Belum ada data. Upload file Excel SO promotor di atas.</td></tr>';
+  const sSO = list.reduce((n,r)=>n+r.so,0), sCRM = list.reduce((n,r)=>n+r.crm,0);
+  $('#tCmp tfoot').innerHTML = list.length ? `<tr><td colspan="2"><b>Total</b></td><td class="num"><b>${sSO}</b></td><td class="num"><b>${sCRM}</b></td><td class="num"><b>${pct(sCRM,sSO)}</b></td><td class="num"><b>${Math.max(0,sSO-sCRM)}</b></td></tr>` : '';
+
+  /* report bulanan */
+  const ym = $('#rMonth').value || todayStr().slice(0,7);
+  const mr = ALL.filter(r=>String(r.date).slice(0,7)===ym), md = DAILY.filter(r=>String(r.date).slice(0,7)===ym);
+  const sum = ks => md.reduce((n,r)=>n+ks.reduce((a,k)=>a+(Number(r[k])||0),0),0);
+  const soExcel = ROSTER.reduce((n,r)=>n+r.so,0);
+  $('#rKpis').innerHTML = [
+    ['hot', mr.length, 'Total CRM bulan ini'],
+    ['', soExcel, 'SO penjualan (upload Excel terakhir)'],
+    ['', sum(['nonAvanto']), 'SO Realme kredit non-Avanto (laporan harian)'],
+    ['', sum(D_NUM.slice(1)), 'SO brand lain (laporan harian)']
+  ].map(([c,v,l])=>`<div class="kpi ${c}"><b>${v}</b><span>${l}</span></div>`).join('');
+  const per = new Map();
+  ROSTER.forEach(r=>per.set(rKey(r),0));
+  mr.forEach(r=>per.set(rKey(r),(per.get(rKey(r))||0)+1));
+  const bk = Array.from({length:12},()=>({p:0,c:0}));
+  per.forEach(n=>{ const i = n>10 ? 11 : n; bk[i].p++; bk[i].c+=n; });
+  const np = per.size || 1;
+  const lbl = i => i===0 ? '0 (belum ada)' : i===11 ? '> 10' : String(i);
+  $('#tScale tbody').innerHTML = bk.map((x,i)=>`<tr><td><b>${lbl(i)}</b></td><td class="num">${x.p}</td><td class="num">${x.c}</td>
+    <td class="prog"><div class="track"><div class="fill" style="width:${x.p/np*100}%"></div></div></td></tr>`).join('');
+  $('#tScale tfoot').innerHTML = `<tr><td><b>Total</b></td><td class="num"><b>${per.size}</b></td><td class="num"><b>${mr.length}</b></td><td></td></tr>`;
+}
+
+/* ---------- upload Excel SO ---------- */
+function mapXlsx(rows){
+  if(!rows.length) throw new Error('File kosong.');
+  const keys = Object.keys(rows[0]), nk = k => k.toLowerCase().replace(/[^a-z0-9]/g,'');
+  const find = fn => keys.find(k=>fn(nk(k)));
+  const isSt = k=>/store|toko/.test(k), isCode = k=>/code|kode/.test(k), isName = k=>/name|nama/.test(k);
+  const cSC = find(k=>isSt(k)&&isCode(k)), cSN = find(k=>isSt(k)&&isName(k)),
+        cC = find(k=>isCode(k)&&!isSt(k)), cN = find(k=>isName(k)&&!isSt(k)&&!/arm|ft|customer/.test(k)),
+        cSO = find(k=>k==='so'||/^so|achiev|pencapaian|sellout|qty|unit/.test(k));
+  if(!cN && !cC) throw new Error('Kolom SA name / SA personal code tidak ditemukan di baris header.');
+  const agg = new Map();
+  normRoster(rows.map(r=>({sa:cN?r[cN]:'',saCode:cC?r[cC]:'',storeCode:cSC?r[cSC]:'',storeName:cSN?r[cSN]:'',so:cSO?r[cSO]:0}))).forEach(r=>{
+    const k = rKey(r); if(agg.has(k)) agg.get(k).so += r.so; else agg.set(k,{...r});
+  });
+  return [...agg.values()];
+}
+$('#soBtn').onclick = async () => {
+  const msg = $('#soMsg'), file = $('#soFile').files[0];
+  if(!file){ msg.innerHTML = '<div class="notice bad">Pilih file Excel dulu.</div>'; return; }
+  if(typeof XLSX === 'undefined'){ msg.innerHTML = '<div class="notice bad">Pembaca Excel gagal dimuat. Cek koneksi internet lalu muat ulang halaman.</div>'; return; }
+  const btn = $('#soBtn'); btn.disabled = true; btn.textContent = 'Memproses...';
+  try{
+    const wb = XLSX.read(await file.arrayBuffer(), {type:'array'});
+    const rows = mapXlsx(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''}));
+    if(!rows.length) throw new Error('Tidak ada baris promotor yang terbaca.');
+    ROSTER = rows; store.set('roster', JSON.stringify(rows)); applyRoster(); render();
+    await fetch(CONFIG.SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({type:'roster', pin: pinValue(), rows}) });
+    await new Promise(r=>setTimeout(r,1800));
+    let remote = null; try{ remote = await fetchRoster(); }catch(e){}
+    msg.innerHTML = remote && remote.length === rows.length
+      ? `<div class="notice ok">${rows.length} promotor tersinkron ke server. Pilihan nama di form sudah diperbarui untuk semua promotor.</div>`
+      : `<div class="notice bad">${rows.length} promotor terbaca dan dipakai di browser ini, tetapi belum tersimpan di server. Script Google Apps Script perlu ditambah dukungan roster (lihat panduan).</div>`;
+  }catch(err){ msg.innerHTML = `<div class="notice bad">${esc(err.message)}</div>`; }
+  finally{ btn.disabled = false; btn.textContent = 'Upload & sinkronkan'; }
+};
 
 function downloadCsv(name, head, keys, rows){
   if(!rows.length){ toast('Tidak ada data untuk diunduh'); return; }
